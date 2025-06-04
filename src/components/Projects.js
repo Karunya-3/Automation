@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
-function Projects({ projects }) {
+function Projects({ projects, deleteProject }) {
   const navigate = useNavigate();
   const [hoveredCard, setHoveredCard] = useState(null);
 
@@ -13,6 +13,7 @@ function Projects({ projects }) {
           + Add Project
         </button>
       </div>
+
       {projects.length === 0 ? (
         <p className="text-muted">No projects added yet. Click "Add Project" to create one.</p>
       ) : (
@@ -20,7 +21,7 @@ function Projects({ projects }) {
           {projects.map((project, idx) => (
             <div key={project.id} className="col-sm-6 col-md-4">
               <div
-                className="card h-100 shadow-sm"
+                className="card h-100 shadow-sm position-relative"
                 style={{
                   cursor: 'pointer',
                   borderColor: '#3F72AF',
@@ -33,6 +34,20 @@ function Projects({ projects }) {
                 onMouseEnter={() => setHoveredCard(idx)}
                 onMouseLeave={() => setHoveredCard(null)}
               >
+                {/* Delete Button */}
+                <button
+                  className="btn btn-danger btn-sm position-absolute"
+                  style={{ top: 10, right: 10, zIndex: 1 }}
+                  onClick={(e) => {
+                    e.stopPropagation(); // prevent card click
+                    if (window.confirm('Are you sure you want to delete this project?')) {
+                      deleteProject(project.id);
+                    }
+                  }}
+                >
+                  Delete
+                </button>
+
                 <div className="card-body d-flex flex-column">
                   <h5 className="card-title" style={{ color: '#3F72AF' }}>
                     {project.name}
@@ -50,10 +65,11 @@ function Projects({ projects }) {
                     </p>
                   )}
                   <p className="mb-0">
-                    <strong>Criticality Level:</strong> {project.criticality}</p>
+                    <strong>Criticality Level:</strong> {project.criticality}
+                  </p>
                   <p className="mb-0">
                     <strong>Project Type:</strong> {project.projectType}
-                    </p>
+                  </p>
                 </div>
               </div>
             </div>

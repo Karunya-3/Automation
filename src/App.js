@@ -31,6 +31,14 @@ export default function App() {
   function addProject(newProject) {
     setProjects((prev) => [newProject, ...prev]);
   }
+  // App.js (update inside the component)
+const deleteProject = (id) => {
+  const updatedProjects = projects.filter((project) => project.id !== id);
+  setProjects(updatedProjects);
+};
+
+
+
 
   return (
     <Router>
@@ -39,7 +47,11 @@ export default function App() {
         <main className="flex-grow-1">
           <Routes>
             <Route path="/" element={<Home />} />
-            <Route path="/projects" element={<Projects projects={projects} />} />
+            <Route
+  path="/projects"
+  element={<Projects projects={projects} deleteProject={deleteProject} />}
+/>
+
             <Route path="/projects/add" element={<AddProject addProject={addProject} />} />
             <Route path="/projects/:id" element={<ProjectDetails projects={projects} />} />
             <Route path="/templates" element={<Templates />} />

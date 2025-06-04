@@ -1,31 +1,68 @@
-import React from 'react';
-import { useState } from 'react';
+import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+
 function SignUp() {
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [confirmPass, setConfirmPass] = useState('');
   const [error, setError] = useState('');
+  const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
 
-  function onSubmit(e) {
+  async function onSubmit(e) {
     e.preventDefault();
+    
+    // Frontend validation
     if (!name || !email || !password || !confirmPass) {
       setError('Please fill in all fields');
       return;
     }
+    
     if (password !== confirmPass) {
       setError('Passwords do not match');
       return;
     }
-    alert(`Signup successful for ${name} (${email})`);
-    setName('');
-    setEmail('');
-    setPassword('');
-    setConfirmPass('');
+
+    if (password.length < 6) {
+      setError('Password must be at least 6 characters long');
+      return;
+    }
+
+    setLoading(true);
     setError('');
-    navigate('/login');
+
+    try {
+      const response = await fetch('http://localhost:5000/api/signup', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ name, email, password }),
+      });
+
+      const data = await response.json();
+      
+      if (!response.ok) {
+        setError(data.message || 'Signup failed');
+        return;
+      }
+      
+      // Success
+      setName('');
+      setEmail('');
+      setPassword('');
+      setConfirmPass('');
+      setError('');
+      
+      // Show success message or redirect
+      alert('Account created successfully! Please login.');
+      navigate('/login');
+    } catch (err) {
+      setError('Something went wrong. Please try again.');
+    } finally {
+      setLoading(false);
+    }
   }
 
   return (
@@ -46,6 +83,7 @@ function SignUp() {
             onChange={(e) => setName(e.target.value)}
             required
             placeholder="Enter your full name"
+            disabled={loading}
           />
         </div>
         <div className="mb-3">
@@ -60,6 +98,7 @@ function SignUp() {
             onChange={(e) => setEmail(e.target.value)}
             required
             placeholder="Enter your email"
+            disabled={loading}
           />
         </div>
         <div className="mb-3">
@@ -73,7 +112,8 @@ function SignUp() {
             value={password}
             onChange={(e) => setPassword(e.target.value)}
             required
-            placeholder="Enter password"
+            placeholder="Enter password (min 6 characters)"
+            disabled={loading}
           />
         </div>
         <div className="mb-3">
@@ -88,14 +128,16 @@ function SignUp() {
             onChange={(e) => setConfirmPass(e.target.value)}
             required
             placeholder="Confirm password"
+            disabled={loading}
           />
         </div>
         {error && <p className="text-danger">{error}</p>}
-        <button type="submit" className="btn btn-primary w-100">
-          Signup
+        <button type="submit" className="btn btn-primary w-100" disabled={loading}>
+          {loading ? 'Creating Account...' : 'Signup'}
         </button>
       </form>
     </div>
   );
 }
+
 export default SignUp;

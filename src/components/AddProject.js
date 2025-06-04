@@ -40,10 +40,12 @@ function AddProject({ addProject }) {
       criticality,
       documents,
     };
+    
 
     addProject(newProject);
     navigate('/projects');
   }
+  
 
   return (
     <div
