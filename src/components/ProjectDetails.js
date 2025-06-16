@@ -67,7 +67,14 @@ function ProjectDetails({ projects }) {
         )}
 
       </div>
-      
+      <div className="mt-4">
+        <button
+          className="btn btn-primary"
+          onClick={() => navigate('/Templates')}
+        >
+          Go-to Templates
+        </button>
+      </div>
     </div>
   );
 }
