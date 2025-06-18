@@ -1,15 +1,15 @@
 import React, { useState, useEffect } from 'react';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import 'bootstrap/dist/css/bootstrap.min.css';
-import NavBar from './components/NavBar'; // Assuming NavBar is also in components
-import Home from './components/Home'; // Assuming Home is also in components
-import Projects from './components/Projects'; // Assuming Projects is also in components
-import AddProject from './components/AddProject'; // Assuming AddProject is also in components
-import ProjectDetails from './components/ProjectDetails'; // Assuming ProjectDetails is also in components
-import Templates from './components/Templates'; // Importing Templates from the new location
-import Login from './components/Login'; // Assuming Login is also in components
-import Signup from './components/SignUp'; // Assuming Signup is also in components
-import NoMatch from './components/NoMatch'; // Assuming NoMatch is also in components
+import NavBar from './components/NavBar'; 
+import Home from './components/Home'; 
+import Projects from './components/Projects'; 
+import AddProject from './components/AddProject'; 
+import ProjectDetails from './components/ProjectDetails'; 
+import Templates from './components/Templates'; 
+import Login from './components/Login';
+import Signup from './components/SignUp'; 
+import NoMatch from './components/NoMatch'; 
 
 // Main App Component
 export default function App() {

@@ -20,7 +20,6 @@ export default function TemplatesSection() {
     "User Acceptance",
   ];
 
-
   const documentTypes = [
     "Full in Phase IV&V",
     "Partial in Phase IV&V",
@@ -33,7 +32,6 @@ export default function TemplatesSection() {
     { id: "3", label: "3" },
     { id: "4", label: "4" },
     { id: "5", label: "5" }
-
   ];
 
   const [projectName, setProjectName] = useState("");
@@ -122,7 +120,6 @@ export default function TemplatesSection() {
   };
 
   const extractHeadings = (text) => {
-    // More flexible regex that handles different spacing patterns
     const headingRegex = /^(\d+(?:\.\d+)*)\s*\.?\s*(.+)$/gm;
     const headings = [];
     let matches;
@@ -249,7 +246,7 @@ export default function TemplatesSection() {
     };
 
     setReport(
-      <div className="comparison-report">
+      <div id="report-to-download" className="comparison-report">
         <div className="project-metadata mb-4 p-3 bg-light rounded">
           <h5>Project Information</h5>
           <div className="row">
@@ -271,7 +268,7 @@ export default function TemplatesSection() {
           )}
           <hr></hr>
           <div className="executive-summary p-3 mb-4 rounded">
-           <h5>Executive Summary</h5>
+            <h5>Executive Summary</h5>
             <p>
               The document validation for <strong>{projectName || "the project"}</strong> ({type || "unspecified type"})
               shows {matchingHeadings.length} of {templateHeadings.length} required headings ({((matchingHeadings.length / templateHeadings.length) * 100).toFixed(1)}%)
@@ -293,9 +290,8 @@ export default function TemplatesSection() {
           </div>
         </div>
 
-        <div className="mt-4 p-3 bg-light rounded">
+        <div className="mt-4 p-3 bg-light rounded compliance-summary">
           <h5 className="mb-3">Compliance Summary</h5>
-          
 
           <div className="row">
             <div className="col-md-6">
@@ -357,6 +353,51 @@ export default function TemplatesSection() {
         </div>
       </div>
     );
+  };
+
+  const downloadPDFReport = () => {
+    const element = document.createElement('div');
+    const reportElement = document.getElementById('report-to-download');
+    
+    // Clone and include only these sections
+    const sectionsToInclude = [
+      '.project-metadata',
+      '.compliance-summary'
+    ];
+    
+    sectionsToInclude.forEach(selector => {
+      const el = reportElement.querySelector(selector);
+      if (el) element.appendChild(el.cloneNode(true));
+    });
+
+    // Add basic styling for the PDF
+    const style = document.createElement('style');
+    style.textContent = `
+      body { font-family: Arial, sans-serif; margin: 20px; }
+      h4, h5, h6 { color: #333; }
+      .card { margin-bottom: 15px; border: 1px solid #ddd; }
+      .card-header { font-weight: bold; background-color: #f8f9fa; }
+      .progress-bar { font-size: 12px; }
+      .list-group-item { padding: 8px 15px; }
+      .list-group-item-danger { background-color: #f8d7da; }
+      .list-group-item-success { background-color: #d4edda; }
+      .project-metadata { background-color: #f8f9fa; padding: 20px; border-radius: 5px; }
+      .executive-summary { background-color: #e9ecef; padding: 15px; border-radius: 5px; margin-top: 15px; }
+      .compliance-summary { background-color: #f8f9fa; padding: 20px; border-radius: 5px; }
+    `;
+    element.appendChild(style);
+
+    const opt = {
+      margin: 10,
+      filename: `Document_Validation_Report_${projectName || 'Project'}.pdf`,
+      image: { type: 'jpeg', quality: 0.98 },
+      html2canvas: { scale: 2 },
+      jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' }
+    };
+
+    // Use html2pdf.js to generate the PDF
+    const html2pdf = require('html2pdf.js');
+    html2pdf().set(opt).from(element).save();
   };
 
   return (
@@ -540,7 +581,15 @@ export default function TemplatesSection() {
 
       {report && (
         <div className="mt-4 p-3 border rounded">
-          <h4 className="text-center mb-3">Structure Comparison Report</h4>
+          <div className="d-flex justify-content-between align-items-center mb-3">
+            <h4 className="text-center mb-0">Structure Comparison Report</h4>
+            <button
+              className="btn btn-success"
+              onClick={downloadPDFReport}
+            >
+              Download Report (PDF)
+            </button>
+          </div>
           {report}
         </div>
       )}

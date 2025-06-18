@@ -4,8 +4,23 @@ import { useParams, useNavigate } from 'react-router-dom';
 function ProjectDetails({ projects }) {
   const { id } = useParams();
   const navigate = useNavigate();
-
   const project = projects.find((p) => p.id === id);
+
+  const handleGoToTemplates = () => {
+    // Pass project data through navigation state
+    navigate('/Templates', {
+      state: {
+        projectData: {
+          projectName: project.name,
+          description: project.description,
+          version: project.version,
+          projectState: project.state,
+          type: project.projectType,
+          criticality: project.criticality
+        }
+      }
+    });
+  };
 
   if (!project) {
     return (
@@ -47,7 +62,6 @@ function ProjectDetails({ projects }) {
       <p className="mt-3">
         <strong>Project Type:</strong> {project.projectType || 'N/A'}
       </p>
-
       <p className="mt-3">
         <strong>Criticality Level:</strong> {project.criticality || 'N/A'}
       </p>
@@ -65,12 +79,11 @@ function ProjectDetails({ projects }) {
             ))}
           </ul>
         )}
-
       </div>
       <div className="mt-4">
         <button
           className="btn btn-primary"
-          onClick={() => navigate('/Templates')}
+          onClick={handleGoToTemplates}
         >
           Go-to Templates
         </button>
@@ -78,4 +91,5 @@ function ProjectDetails({ projects }) {
     </div>
   );
 }
+
 export default ProjectDetails;
